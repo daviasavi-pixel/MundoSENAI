@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gênio Quiz - Edição Impossível</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+
+        body {
+            background-color: #008080; /* Teal clássico do Windows 95 */
+            background-image: radial-gradient(#00ffff 1px, transparent 0);
+            background-size: 16px 16px;
+            font-family: 'Comic Sans MS', 'Comic Neue', 'Impact', cursive, sans-serif;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .paint-card {
+            background: #c0c0c0;
+            border: 4px solid #000000;
+            box-shadow: 8px 8px 0px #000000, inset -3px -3px 0px #808080, inset 3px 3px 0px #ffffff;
+        }
+
+        .paint-btn {
+            background: #e0e0e0;
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000, inset -2px -2px 0px #808080, inset 2px 2px 0px #ffffff;
+            transition: all 0.05s ease;
+            font-weight: 900;
+            color: #000000;
+        }
+        
+        .paint-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px #000000, inset -1px -1px 0px #ffffff, inset 1px 1px 0px #808080;
+        }
+
+        .paint-btn-danger {
+            background: #ff0000;
+            color: #ffffff;
+            text-shadow: 2px 2px #000000;
+        }
+
+        .paint-btn-success {
+            background: #00ff00;
+            color: #000000;
+        }
+
+        .paint-btn-warning {
+            background: #ffff00;
+            color: #000000;
+        }
+
+        .shake {
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-4px, 0, 0) rotate(-2deg); }
+            20%, 80% { transform: translate3d(6px, 0, 0) rotate(2deg); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0) rotate(-4deg); }
+            40%, 60% { transform: translate3d(8px, 0, 0) rotate(4deg); }
+        }
+
+        .marquee-box {
+            background: #000080;
+            color: #ffff00;
+            border: 2px solid #000;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .rainbow-text {
+            background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 2s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Botão Fujão */
+        #escapingBtn {
+            position: absolute;
+            transition: all 0.08s ease;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 select-none">
+
+    <!-- CABEÇALHO -->
+    <header class="w-full max-w-2xl paint-card p-2 sm:p-3 flex justify-between items-center mb-3">
+        <div class="flex items-center space-x-2">
+            <span class="text-2xl sm:text-3xl animate-bounce">🤡</span>
+            <div>
+                <h1 class="font-black text-xl sm:text-2xl rainbow-text tracking-widest leading-none">
+                    GÊNIO QUIZ
+                </h1>
+                <span class="text-[10px] text-black font-bold uppercase block bg-yellow-300 border border-black px-1">
+                    Edição Nível Impossível
+                </span>
+            </div>
+        </div>
+
+        <button id="openEditorBtn" title="Gerenciador de Perguntas" class="paint-btn paint-btn-warning text-xs px-2 py-1 flex items-center gap-1">
+            <i class="fa-solid fa-wrench"></i>
+            <span class="hidden sm:inline">EDITAR</span>
+        </button>
+    </header>
+
+    <!-- CONTAINER DO JOGO -->
+    <main id="mainContainer" class="w-full max-w-2xl flex-1 flex flex-col items-center justify-center relative min-h-[460px]">
+
+        <!-- TELA INICIAL -->
+        <div id="startScreen" class="w-full paint-card p-4 sm:p-8 text-center flex flex-col items-center justify-between space-y-4 my-auto">
+            <div class="marquee-box w-full p-1 text-xs sm:text-sm overflow-hidden whitespace-nowrap">
+            
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="text-3xl sm:text-5xl font-black text-red-600 drop-shadow-[3px_3px_0px_#000] uppercase tracking-wider">
+                    DESAFIO SUPREMO
+                </h2>
+                <p class="text-black font-bold text-sm sm:text-base bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000]">
+                    SE ERRAR UMA RESPOSTA, VOLTA AO INÍCIO SEM CHORO!<br>
+                    <span class="text-red-600 text-xs font-black">NÃO EXISTEM PULOS NESTA EDIÇÃO!</span>
+                </p>
+            </div>
+
+            <div class="flex justify-center gap-4 my-2">
+                <span class="text-4xl animate-spin">🌀</span>
+                <span class="text-4xl animate-bounce">💀</span>
+                <span class="text-4xl animate-pulse">🔥</span>
+            </div>
+
+            <div class="bg-yellow-200 border-2 border-black p-2 text-xs font-bold text-slate-800">
+                Erros nesta sessão: <span id="startDeathCount" class="text-red-600 font-black text-sm">0</span>
+            </div>
+
+            <button id="btnStartGame" class="paint-btn paint-btn-success text-2xl sm:text-3xl px-8 py-4 w-full max-w-sm uppercase tracking-widest cursor-pointer animate-pulse hover:bg-lime-400">
+                ▶ COMEÇAR A SOFRER
+            </button>
+        </div>
+
+        <!-- TELA DE JOGO -->
+        <div id="gameScreen" class="hidden w-full paint-card p-4 sm:p-6 flex flex-col justify-between min-h-[440px] relative">
+            
+            <!-- BARRA SUPERIOR -->
+            <div class="flex justify-between items-center border-b-4 border-black pb-2 mb-3 bg-slate-200 p-2">
+                <span id="questionNumTag" class="paint-btn bg-yellow-300 text-black text-xs sm:text-sm px-3 py-1 font-black cursor-pointer select-none">
+                    Questão <span id="currentQuestionNum">1</span>
+                </span>
+
+                <span id="secretClickArea" class="text-[10px] text-transparent hover:text-slate-400 cursor-pointer">
+                    [ajuda secreta]
+                </span>
+            </div>
+
+            <!-- ENUNCIADO DA PERGUNTA -->
+            <div class="my-auto py-2 text-center relative flex flex-col items-center justify-center min-h-[120px]">
+                <h2 id="questionText" class="text-lg sm:text-2xl font-black text-black leading-tight bg-white border-2 border-black p-3 shadow-[4px_4px_0px_#000] w-full">
+                    <!-- Pergunta renderizada via JS -->
+                </h2>
+                
+                <div id="interactiveArea" class="mt-3 w-full flex justify-center items-center min-h-[50px] relative">
+                    <!-- Elementos interativos dinâmicos -->
+                </div>
+            </div>
+
+            <!-- OPÇÕES DE RESPOSTA -->
+            <div id="optionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-3">
+                <!-- Botões dinâmicos -->
+            </div>
+
+            <div id="footerTroll" class="text-[10px] text-center text-slate-700 mt-2 font-mono">
+                Gênio Quiz Original - Observe tudo, nem sempre a resposta está nos botões.
+            </div>
+        </div>
+
+        <!-- TELA GAME OVER -->
+        <div id="gameOverScreen" class="hidden w-full paint-card bg-red-600 p-6 sm:p-8 text-center flex flex-col items-center justify-center space-y-4 my-auto border-4 border-black shadow-[10px_10px_0px_#000]">
+            <div class="text-6xl sm:text-8xl shake">
+                🤮
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-black text-yellow-300 drop-shadow-[4px_4px_0px_#000] uppercase tracking-widest">
+                ERROU, BURRO!
+            </h2>
+
+            <p id="gameOverMsg" class="bg-black text-white p-3 border-2 border-white font-mono text-sm sm:text-base max-w-md">
+                "Você caiu na pegadinha mais idiota do jogo!"
+            </p>
+
+            <div class="bg-yellow-300 border-2 border-black p-2 text-black font-black text-xs sm:text-sm">
+                PAROU NA: <span id="failedAtNum" class="text-red-700 underline">QUESTÃO 1</span> | 
+                DERROTAS TOTAIS: <span id="totalDeathsCount" class="text-red-700">1</span>
+            </div>
+
+            <button id="btnRestartGame" class="paint-btn paint-btn-warning text-xl sm:text-2xl px-8 py-3.5 w-full max-w-xs uppercase tracking-wider cursor-pointer font-black">
+                🔄 TENTAR DE NOVO
+            </button>
+        </div>
+
+        <!-- TELA DE VITÓRIA -->
+        <div id="victoryScreen" class="hidden w-full paint-card bg-yellow-300 p-6 sm:p-10 text-center flex flex-col items-center justify-center space-y-6 my-auto">
+            <div class="text-7xl animate-bounce">
+                👑
+            </div>
+            <h2 class="text-3xl sm:text-5xl font-black text-emerald-700 drop-shadow-[3px_3px_0px_#000] uppercase">
+                VOCÊ É UM GÊNIO DE VERDADE!
+            </h2>
+            <p class="bg-white border-2 border-black p-3 font-bold text-black text-sm sm:text-base">
+                Você superou todas as pegadinhas e provou ser imbatível!
+            </p>
+            <button id="btnPlayAgain" class="paint-btn paint-btn-success text-2xl px-8 py-4 uppercase font-black">
+                JOGAR NOVAMENTE
+            </button>
+        </div>
+
+    </main>
+
+    <!-- MODAL EDITOR -->
+    <div id="editorModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 sm:p-4">
+        <div class="paint-card w-full max-w-xl max-h-[92vh] flex flex-col overflow-hidden text-black">
+            <div class="bg-blue-900 text-yellow-300 p-3 border-b-4 border-black flex justify-between items-center font-black">
+                <span class="flex items-center gap-2 text-sm sm:text-base">
+                    🛠️ GERENCIADOR DE QUESTÕES
+                </span>
+                <button id="closeEditorBtn" class="bg-red-600 text-white px-2 py-0.5 border border-black font-bold text-sm">&times;</button>
+            </div>
+
+            <div class="p-3 sm:p-4 overflow-y-auto space-y-4 flex-1 text-xs">
+                <div class="flex justify-between items-center bg-white p-2 border border-black">
+                    <span class="font-bold">Gerencie suas perguntas do Quiz.</span>
+                    <button id="btnResetDefault" class="paint-btn paint-btn-danger text-[10px] px-2 py-1">
+                        Restaurar Padrão
+                    </button>
+                </div>
+
+                <form id="questionForm" class="bg-slate-200 p-3 border-2 border-black space-y-2">
+                    <input type="hidden" id="editIndex" value="-1">
+
+                    <div>
+                        <label class="block font-bold mb-1">Tipo da Pegadinha:</label>
+                        <select id="qType" class="w-full bg-white border border-black p-1 text-xs font-bold">
+                            <option value="standard">Múltipla Escolha Padrão</option>
+                            <option value="trick_title">Clicar no Número da Questão</option>
+                            <option value="color_trick">Texto x Cor Invertida</option>
+                            <option value="escaping_btn">Botão Fujão</option>
+                            <option value="death_counter">Perguntar quantidade de mortes</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-1">Enunciado:</label>
+                        <input type="text" id="qText" required class="w-full bg-white border border-black p-1 text-xs font-bold">
+                    </div>
+
+                    <div id="optionsInputs" class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block font-bold text-[10px]">Opção A (0):</label>
+                            <input type="text" id="opt0" class="w-full bg-white border border-black p-1 text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[10px]">Opção B (1):</label>
+                            <input type="text" id="opt1" class="w-full bg-white border border-black p-1 text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[10px]">Opção C (2):</label>
+                            <input type="text" id="opt2" class="w-full bg-white border border-black p-1 text-xs">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-[10px]">Opção D (3):</label>
+                            <input type="text" id="opt3" class="w-full bg-white border border-black p-1 text-xs">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-1">Índice da Resposta Correta (0 a 3):</label>
+                        <select id="correctIndex" class="w-full bg-white border border-black p-1 text-xs font-bold">
+                            <option value="0">Opção A (0)</option>
+                            <option value="1">Opção B (1)</option>
+                            <option value="2">Opção C (2)</option>
+                            <option value="3">Opção D (3)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex justify-end space-x-2 pt-2">
+                        <button type="button" id="btnCancelEdit" class="paint-btn px-3 py-1 text-xs">Cancelar</button>
+                        <button type="submit" class="paint-btn paint-btn-success px-4 py-1 text-xs font-bold">Salvar Questão</button>
+                    </div>
+                </form>
+
+                <div>
+                    <h3 class="font-black text-xs uppercase mb-1">Lista de Questões:</h3>
+                    <div id="questionsList" class="space-y-1.5 max-h-40 overflow-y-auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+
+        // Estado do Jogo
+        let questions = [];
+        let currentIndex = 0;
+        let deathCount = 0;
+
+        // DOM
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const victoryScreen = document.getElementById('victoryScreen');
+
+        const questionTextEl = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const interactiveArea = document.getElementById('interactiveArea');
+        const currentQuestionNumEl = document.getElementById('currentQuestionNum');
+        const questionNumTag = document.getElementById('questionNumTag');
+        const totalDeathsCount = document.getElementById('totalDeathsCount');
+        const startDeathCount = document.getElementById('startDeathCount');
+
+        // WEB AUDIO API - EFEITOS SONOROS
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'fail') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(160, now);
+                    osc.frequency.linearRampToValueAtTime(70, now + 0.35);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                }
+            } catch(e){}
+        }
+
+        function loadQuestions() {
+            const saved = localStorage.getItem('genio_quiz_v3_questions');
+            if (saved) {
+                try {
+                    questions = JSON.parse(saved);
+                } catch(e) {
+                    questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+                }
+            } else {
+                questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+            }
+        }
+
+        function saveQuestions() {
+            localStorage.setItem('genio_quiz_v3_questions', JSON.stringify(questions));
+        }
+
+        function initEvents() {
+            document.getElementById('btnStartGame').addEventListener('click', startGame);
+            document.getElementById('btnRestartGame').addEventListener('click', startGame);
+            document.getElementById('btnPlayAgain').addEventListener('click', startGame);
+
+            document.getElementById('secretClickArea').addEventListener('click', () => {
+                triggerGameOver("Tentou trapacear clicando na ajuda secreta!");
+            });
+
+            document.getElementById('openEditorBtn').addEventListener('click', openEditor);
+            document.getElementById('closeEditorBtn').addEventListener('click', closeEditor);
+            document.getElementById('btnCancelEdit').addEventListener('click', resetEditorForm);
+            document.getElementById('btnResetDefault').addEventListener('click', resetToDefaultQuestions);
+            document.getElementById('questionForm').addEventListener('submit', handleSaveQuestion);
+        }
+
+        function startGame() {
+            playSound('correct');
+            loadQuestions();
+            currentIndex = 0;
+
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            victoryScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            optionsContainer.innerHTML = '';
+            interactiveArea.innerHTML = '';
+
+            currentQuestionNumEl.textContent = currentIndex + 1;
+
+            questionNumTag.onclick = null;
+            questionNumTag.className = "paint-btn bg-yellow-300 text-black text-xs sm:text-sm px-3 py-1 font-black cursor-pointer select-none";
+
+            if (currentIndex >= questions.length) {
+                showVictory();
+                return;
+            }
+
+            const q = questions[currentIndex];
+            questionTextEl.textContent = q.text;
+
+            // PEGADINHA: Clicar no título da questão
+            if (q.type === 'trick_title') {
+                questionNumTag.classList.add('animate-bounce', 'bg-red-500', 'text-white');
+                questionNumTag.onclick = () => {
+                    playSound('correct');
+                    nextQuestion();
+                };
+            }
+
+            // PEGADINHA: Contador de mortes
+            if (q.type === 'death_counter') {
+                renderDeathCounterQuestion();
+                return;
+            }
+
+            // PEGADINHA: Botão Fujão
+            if (q.type === 'escaping_btn') {
+                renderEscapingButtonQuestion(q);
+                return;
+            }
+
+            // PEGADINHA: Cores Trocadas
+            if (q.type === 'color_trick') {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "paint-btn text-base sm:text-lg py-3 px-4 w-full cursor-pointer";
+                    btn.style.backgroundColor = opt.color;
+                    btn.style.color = "#ffffff";
+                    btn.style.textShadow = "2px 2px #000";
+                    btn.textContent = opt.text;
+
+                    btn.onclick = () => {
+                        if (idx === q.correct) {
+                            playSound('correct');
+                            nextQuestion();
+                        } else {
+                            triggerGameOver("Atenção! Você errou ao conferir a palavra ou a cor do texto!");
+                        }
+                    };
+                    optionsContainer.appendChild(btn);
+                });
+                return;
+            }
+
+            // Múltipla escolha padrão
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "paint-btn text-sm sm:text-base py-3 px-3 w-full text-left flex items-center space-x-2 cursor-pointer hover:bg-yellow-200";
+                
+                const letters = ['A', 'B', 'C', 'D'];
+                btn.innerHTML = `<span class="bg-black text-yellow-300 px-2 py-0.5 text-xs font-bold">${letters[idx]}</span> <span>${optText}</span>`;
+
+                btn.onclick = () => {
+                    if (idx === q.correct) {
+                        playSound('correct');
+                        nextQuestion();
+                    } else {
+                        triggerGameOver();
+                    }
+                };
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function renderDeathCounterQuestion() {
+            let options = [
+                `${deathCount} vezes`,
+                `${deathCount + 1} vezes`,
+                `${deathCount + 2} vezes`,
+                `${deathCount + 3} vezes`
+            ];
+
+            options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "paint-btn text-sm py-3 px-3 w-full text-left hover:bg-orange-200 cursor-pointer";
+                btn.textContent = optText;
+
+                btn.onclick = () => {
+                    if (idx === 0) {
+                        playSound('correct');
+                        nextQuestion();
+                    } else {
+                        triggerGameOver("Sua memória falhou! Essa não é a quantidade de mortes nesta sessão.");
+                    }
+                };
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function renderEscapingButtonQuestion(q) {
+            q.options.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "paint-btn text-sm py-3 px-3 w-full cursor-pointer";
+                btn.textContent = optText;
+
+                if (idx === q.correct) {
+                    btn.id = "escapingBtn";
+                    btn.classList.add("paint-btn-success");
+                    
+                    const moveBtn = () => {
+                        const parentRect = gameScreen.getBoundingClientRect();
+                        const randomX = Math.floor(Math.random() * (parentRect.width - 120));
+                        const randomY = Math.floor(Math.random() * (parentRect.height - 80));
+                        
+                        btn.style.left = `${randomX}px`;
+                        btn.style.top = `${randomY}px`;
+                    };
+
+                    btn.addEventListener('mouseover', moveBtn);
+                    btn.addEventListener('touchstart', moveBtn);
+
+                    btn.onclick = () => {
+                        playSound('correct');
+                        nextQuestion();
+                    };
+                } else {
+                    btn.onclick = () => {
+                        triggerGameOver("Clicou na opção errada enquanto tentava alcançar o fujão!");
+                    };
+                }
+
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            renderQuestion();
+        }
+
+        function triggerGameOver(customMsg = null) {
+            deathCount++;
+            playSound('fail');
+            
+            totalDeathsCount.textContent = deathCount;
+            startDeathCount.textContent = deathCount;
+
+            document.getElementById('failedAtNum').textContent = `QUESTÃO ${currentIndex + 1}`;
+            
+            if (customMsg) {
+                document.getElementById('gameOverMsg').textContent = customMsg;
+            } else {
+                const trollMsgs = [
+                    "Burro! Caiu na pegadinha mais idiota de todas!",
+                    "Você não dura 2 minutos num desafio de verdade!",
+                    "Errou feio! Volta pro começo!",
+                    "Nem tentando adivinhar você acerta!"
+                ];
+                document.getElementById('gameOverMsg').textContent = trollMsgs[Math.floor(Math.random() * trollMsgs.length)];
+            }
+
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+        }
+
+        function showVictory() {
+            playSound('correct');
+            gameScreen.classList.add('hidden');
+            victoryScreen.classList.remove('hidden');
+        }
+
+        // GERENCIADOR DE QUESTÕES
+        function openEditor() {
+            loadQuestions();
+            renderEditorList();
+            document.getElementById('editorModal').classList.remove('hidden');
+        }
+
+        function closeEditor() {
+            document.getElementById('editorModal').classList.add('hidden');
+            resetEditorForm();
+        }
+
+        function renderEditorList() {
+            const listEl = document.getElementById('questionsList');
+            listEl.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-white p-2 border border-black flex justify-between items-center text-xs";
+                item.innerHTML = `
+                    <div class="truncate flex-1 pr-2">
+                        <strong class="text-red-600">#${idx + 1}</strong> ${q.text}
+                    </div>
+                    <div class="flex space-x-1">
+                        <button onclick="editQuestion(${idx})" class="bg-blue-600 text-white px-2 py-0.5 border border-black"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteQuestion(${idx})" class="bg-red-600 text-white px-2 py-0.5 border border-black"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        function handleSaveQuestion(e) {
+            e.preventDefault();
+            const editIdx = parseInt(document.getElementById('editIndex').value);
+            const type = document.getElementById('qType').value;
+            const text = document.getElementById('qText').value;
+            const correct = parseInt(document.getElementById('correctIndex').value);
+
+            let newQ = {
+                type: type,
+                text: text,
+                correct: type === 'trick_title' ? -1 : correct,
+                options: [
+                    document.getElementById('opt0').value || "Opção A",
+                    document.getElementById('opt1').value || "Opção B",
+                    document.getElementById('opt2').value || "Opção C",
+                    document.getElementById('opt3').value || "Opção D"
+                ]
+            };
+
+            if (editIdx >= 0) {
+                questions[editIdx] = newQ;
+            } else {
+                questions.push(newQ);
+            }
+
+            saveQuestions();
+            renderEditorList();
+            resetEditorForm();
+        }
+
+        window.editQuestion = function(idx) {
+            const q = questions[idx];
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('qType').value = q.type || 'standard';
+            document.getElementById('qText').value = q.text;
+            document.getElementById('correctIndex').value = q.correct >= 0 ? q.correct : 0;
+
+            if (q.options) {
+                q.options.forEach((opt, oIdx) => {
+                    const input = document.getElementById(`opt${oIdx}`);
+                    if (input) input.value = typeof opt === 'object' ? opt.text : opt;
+                });
+            }
+        };
+
+        window.deleteQuestion = function(idx) {
+            if (questions.length <= 1) return;
+            questions.splice(idx, 1);
+            saveQuestions();
+            renderEditorList();
+        };
+
+        function resetEditorForm() {
+            document.getElementById('questionForm').reset();
+            document.getElementById('editIndex').value = "-1";
+        }
+
+        function resetToDefaultQuestions() {
+            if (confirm("Restaurar o banco de perguntas padrão?")) {
+                questions = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+                saveQuestions();
+                renderEditorList();
+            }
+        }
+
+        window.onload = function() {
+            initEvents();
+            loadQuestions();
+        };
+    </script>
+</body>
+</html>
