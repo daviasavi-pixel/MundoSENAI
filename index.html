@@ -87,13 +87,6 @@
             0% { filter: hue-rotate(0deg); }
             100% { filter: hue-rotate(360deg); }
         }
-
-        /* Botão Fujão */
-        #escapingBtn {
-            position: absolute;
-            transition: all 0.08s ease;
-            z-index: 50;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 select-none">
@@ -107,7 +100,7 @@
                     GÊNIO QUIZ
                 </h1>
                 <span class="text-[10px] text-black font-bold uppercase block bg-yellow-300 border border-black px-1">
-                    Edição Nível Impossível
+                    Edição Nível Impossível (40 Questões)
                 </span>
             </div>
         </div>
@@ -124,7 +117,7 @@
         <!-- TELA INICIAL -->
         <div id="startScreen" class="w-full paint-card p-4 sm:p-8 text-center flex flex-col items-center justify-between space-y-4 my-auto">
             <div class="marquee-box w-full p-1 text-xs sm:text-sm overflow-hidden whitespace-nowrap">
-            
+                🔥 BEM-VINDO AO GÊNIO QUIZ! 40 QUESTÕES PARA DESTRUIR SEU CÉREBRO! 🔥
             </div>
 
             <div class="space-y-2">
@@ -133,7 +126,7 @@
                 </h2>
                 <p class="text-black font-bold text-sm sm:text-base bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000]">
                     SE ERRAR UMA RESPOSTA, VOLTA AO INÍCIO SEM CHORO!<br>
-                    <span class="text-red-600 text-xs font-black">NÃO EXISTEM PULOS NESTA EDIÇÃO!</span>
+                    <span class="text-red-600 text-xs font-black">SÃO 40 ETAPAS CHEIAS DE PEGADINHAS!</span>
                 </p>
             </div>
 
@@ -220,7 +213,7 @@
                 VOCÊ É UM GÊNIO DE VERDADE!
             </h2>
             <p class="bg-white border-2 border-black p-3 font-bold text-black text-sm sm:text-base">
-                Você superou todas as pegadinhas e provou ser imbatível!
+                Você superou todas as 40 pegadinhas e provou ser imbatível!
             </p>
             <button id="btnPlayAgain" class="paint-btn paint-btn-success text-2xl px-8 py-4 uppercase font-black">
                 JOGAR NOVAMENTE
@@ -256,7 +249,7 @@
                             <option value="standard">Múltipla Escolha Padrão</option>
                             <option value="trick_title">Clicar no Número da Questão</option>
                             <option value="color_trick">Texto x Cor Invertida</option>
-                            <option value="escaping_btn">Botão Fujão</option>
+                            <option value="escaping_btn">Botão em Destaque</option>
                             <option value="death_counter">Perguntar quantidade de mortes</option>
                         </select>
                     </div>
@@ -310,7 +303,419 @@
     </div>
 
     <script>
-        
+        // BANCO DE 40 PERGUNTAS PADRÃO
+       // BANCO DE 40 PERGUNTAS ORGANIZADO E SEPARADO
+const DEFAULT_QUESTIONS = [
+    // -------------------------------------------------------------
+    // QUESTÃO 1
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual ano foi criado o SENAI ( obrigatório o acerto )?', 
+        options: ['1942', '1945', '1960', '2001'], 
+        correct: 0
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 2
+    // -------------------------------------------------------------
+    { 
+        type: 'trick_title', 
+        text: '1 + 1?', 
+        options: ['2!', '11!', 'não sei', 'six seven'], 
+        correct: -1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 3
+    // -------------------------------------------------------------
+    { 
+        type: 'standad', 
+        text: 'Se você jogar um dado de 20 lados 8 vezes,qual a probabilidade do número 3 cair 2 vezes?', 
+        options: ['0,09%', '0,079%', '10,54%', '5,15%'], 
+        correct: 3
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 4
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Quantos dias de vida o criador do jogo irá ter no dia 5 de novembro de 2026?', 
+        options: ['5.872 dias', '6.017 dias', '5.438 dias', '5.649 dias'],
+        correct: 0
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 5
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual a resposta te leva a próxima fase?', 
+        options: ['Aqui.', 'não sei mano', 'É essa.', 'Não é essa.'], 
+        correct: 0
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 6
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual a massa de gás cloro necessária para produzir 480 kg de titânio metálico', 
+        options: ['17kg', '2.037,4kg', '1.420 kg', '0kg'], 
+        correct: 2
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 7
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Yes or no?', 
+        options: ['Yes', 'No'], 
+        correct: 1
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 8
+    // -------------------------------------------------------------
+    { 
+        type: 'death_counter', 
+        text: 'Quantas vezes você já errou nesta sessão do quiz?', 
+        options: [], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 9
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual o número do meio entre 1 e 99?', 
+        options: ['49.5', '50', '49', '51'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 10
+    // -------------------------------------------------------------
+    { 
+        type: 'stantard', 
+        text: '게이이신가요?', 
+        options: ['예', '분명한', '아니요', '저는 매일 공부합니다.'], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 11
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual é a data de nascimento do Michael Jackson?', 
+        options: ['23 de agosto de 1956', '07 de maio de 1950', '17 de junho de 1961', '29 de agosto de 1958'], 
+        correct: 3
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 12
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual é o presidente atual da África do Sul?', 
+        options:['James Pyrro S.','Elon Musk','Cyril Ramaphosa','Nelson Mandela'],
+        correct: 2 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 13
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Se w e z pertencem ao conjunto C, tais que w = 3 + 2i e z = 1 + bi, determine o valor de b sabendo que o produto w * z é um número real puro.', 
+        options: [' b = +- 3,4√', 'b = -2/3', 'b = -2√3', 'b = √3/-5'], 
+        correct: 1
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 14
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'se 5 = 1, 3 = 8 e 9 = 7, 2 = ?', 
+        options: ['?', '4', '18', '0,33...'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 15
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '13⁵⁶', 
+        options: ['3.6705454e+73', '2.4034093e+62', '2.670543e+57', '4.654354e+66'], 
+        correct: 1
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 16
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Pra que chutar a bola na Mavi pô?', 
+        options: ['Pra que?', 'Arrogante', '(olhar de mil jardas)', 'Não sou babaca.'], 
+        correct: 1
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 17
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Acerte', 
+        options: ['Próxima', 'Continuar', 'Avançar', 'Pular'], 
+        correct: 3
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 18
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual a fortuna investida para o desenvolvimento do GTA VI ?', 
+        options: ['US$ 3 bilhão a US$ 5 bilhões', 'US$ 4 bilhões', 'US$ 7 bilhão a US$ 9 bilhões', 'US$ 1 bilhão a US$ 2 bilhões'], 
+        correct: 3
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 19
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'A fórmula molecular da dipirona sódica é:', 
+        options: ['Não possui','C₁₃H₁₆N₃O₄SNa','CH₃COCH₃','C₈H₁₁NO₂'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 20
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Quantas linhas de código tem este site aproximadamente?', 
+        options: ['≈1090', '≈2057', '≈700', '≈2100'], 
+        correct: 0
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 21
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Qual o número da questão está pedindo "Yes or No?"', 
+        options: ['12', '4', '7', '15'], 
+        correct: 2
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 22
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Por padrão Nacional, qual é o penúltimo digito registrado no CPF no estado de Rondônia?', 
+        options: ['8', '6', '9', '2'], 
+        correct: 3
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 23
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Um daltônico nível 2, enxerga que cor o "nosso" azul?', 
+        options: ['roxo', 'azul', 'vermelho', 'verde'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 24
+    // -------------------------------------------------------------
+    { 
+        type: 'death_counter', 
+        text: 'Quantas derrotas você acumulou até agora?', 
+        options: [], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 25
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: 'Ψ', 
+        options: ['Psicologia', 'Zeus', 'Apocalipse', 'Tridente'], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 26
+    // -------------------------------------------------------------
+    { 
+        type: 'trick_title', 
+        text: '26) Olhe para o topo! Clique no número da questão!', 
+        options: ['Botão A', 'Botão B', 'Botão C', 'Botão D'], 
+        correct: -1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 27
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '27) Se 5 gatos pegam 5 ratos em 5 minutos, quantos gatos pegam 100 ratos em 100 minutos?', 
+        options: ['100 gatos', '20 gatos', '5 gatos', '50 gatos'], 
+        correct: 2 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 28
+    // -------------------------------------------------------------
+    { 
+        type: 'color_trick', 
+        text: '28) Clique onde está escrito VERMELHO:', 
+        options: [
+            { text: 'VERMELHO', color: '#000000' }, 
+            { text: 'PRETO', color: '#ff0000' }, 
+            { text: 'AZUL', color: '#ff0000' }, 
+            { text: 'VERDE', color: '#ff0000' }
+        ], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 29
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '29) O que tem dentes mas não morde?', 
+        options: ['O pente', 'O cachorro velho', 'O alho', 'O zíper'], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 30
+    // -------------------------------------------------------------
+    { 
+        type: 'escaping_btn', 
+        text: '30) Chegamos na questão 30! Clique no botão correto!', 
+        options: ['Opção 1', 'Opção 2', 'AQUI!', 'Opção 4'], 
+        correct: 2 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 31
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '31) Qual é o peso de 1kg de algodão comparado a 1kg de chumbo?', 
+        options: ['Algodão é mais leve', 'Chumbo é mais pesado', 'Têm o mesmo peso', 'Depende do vento'], 
+        correct: 2 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 32
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '32) O que pertence a você, mas os outros usam mais do que você?', 
+        options: ['Seu dinheiro', 'Seu nome', 'Sua casa', 'Seu telefone'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 33
+    // -------------------------------------------------------------
+    { 
+        type: 'trick_title', 
+        text: '33) Clique no número da questão na barra superior Amarela!', 
+        options: ['Avançar', 'Continuar', 'Seguir', 'Pular'], 
+        correct: -1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 34
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '34) O que anda com os pés na cabeça?', 
+        options: ['O piolho', 'O caranguejo', 'O pato', 'O ciúme'], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 35
+    // -------------------------------------------------------------
+    { 
+        type: 'color_trick', 
+        text: '35) Selecione a palavra PRETO:', 
+        options: [
+            { text: 'BRANCO', color: '#000000' }, 
+            { text: 'CINZA', color: '#000000' }, 
+            { text: 'PRETO', color: '#ffffff' }, 
+            { text: 'AZUL', color: '#000000' }
+        ], 
+        correct: 2 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 36
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '36) Tem 12 coxas de galinha na mesa, você comeu 4. Quantas sobraram?', 
+        options: ['8', '12', '4', 'Nenhuma'], 
+        correct: 1 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 37
+    // -------------------------------------------------------------
+    { 
+        type: 'escaping_btn', 
+        text: '37) Clique no botão verde!', 
+        options: ['Errado', 'Errado', 'Errado', 'ACERTE ME!'], 
+        correct: 3 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 38
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '38) O que é que tem polegar e quatro dedos, mas não é vivo?', 
+        options: ['Uma luva', 'Um robô', 'Uma estátua', 'Um desenho'], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 39
+    // -------------------------------------------------------------
+    { 
+        type: 'death_counter', 
+        text: '39) Quantos erros você cometeu no jogo inteiro até aqui?', 
+        options: [], 
+        correct: 0 
+    },
+
+    // -------------------------------------------------------------
+    // QUESTÃO 40
+    // -------------------------------------------------------------
+    { 
+        type: 'standard', 
+        text: '40) QUESTÃO FINAL: Qual é a resposta para a vida, o universo e tudo mais?', 
+        options: ['42', '100', 'Deus', 'Amor'], 
+        correct: 0 
+    }
+];
 
         // Estado do Jogo
         let questions = [];
@@ -427,9 +832,10 @@
             const q = questions[currentIndex];
             questionTextEl.textContent = q.text;
 
-            // PEGADINHA: Clicar no título da questão
+            // PEGADINHA: Clicar no número da questão no topo (fica parado, sem pular)
             if (q.type === 'trick_title') {
-                questionNumTag.classList.add('animate-bounce', 'bg-red-500', 'text-white');
+                questionNumTag.classList.remove('bg-yellow-300');
+                questionNumTag.classList.add('bg-red-500', 'text-white');
                 questionNumTag.onclick = () => {
                     playSound('correct');
                     nextQuestion();
@@ -442,7 +848,7 @@
                 return;
             }
 
-            // PEGADINHA: Botão Fujão
+            // PEGADINHA: Botão em Destaque (parado, sem fugir)
             if (q.type === 'escaping_btn') {
                 renderEscapingButtonQuestion(q);
                 return;
@@ -523,28 +929,14 @@
                 btn.textContent = optText;
 
                 if (idx === q.correct) {
-                    btn.id = "escapingBtn";
                     btn.classList.add("paint-btn-success");
-                    
-                    const moveBtn = () => {
-                        const parentRect = gameScreen.getBoundingClientRect();
-                        const randomX = Math.floor(Math.random() * (parentRect.width - 120));
-                        const randomY = Math.floor(Math.random() * (parentRect.height - 80));
-                        
-                        btn.style.left = `${randomX}px`;
-                        btn.style.top = `${randomY}px`;
-                    };
-
-                    btn.addEventListener('mouseover', moveBtn);
-                    btn.addEventListener('touchstart', moveBtn);
-
                     btn.onclick = () => {
                         playSound('correct');
                         nextQuestion();
                     };
                 } else {
                     btn.onclick = () => {
-                        triggerGameOver("Clicou na opção errada enquanto tentava alcançar o fujão!");
+                        triggerGameOver("Clicou na opção errada!");
                     };
                 }
 
@@ -571,8 +963,8 @@
             } else {
                 const trollMsgs = [
                     "Burro! Caiu na pegadinha mais idiota de todas!",
-                    "Você não dura 2 minutos num desafio de verdade!",
-                    "Errou feio! Volta pro começo!",
+                    "Essa caiu na creche!",
+                    "Essa até meu cachorro resolveu!",
                     "Nem tentando adivinhar você acerta!"
                 ];
                 document.getElementById('gameOverMsg').textContent = trollMsgs[Math.floor(Math.random() * trollMsgs.length)];
